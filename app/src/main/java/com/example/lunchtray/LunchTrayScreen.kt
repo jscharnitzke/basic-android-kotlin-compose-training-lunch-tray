@@ -163,7 +163,12 @@ fun LunchTrayApp(
             composable(route = Screen.Checkout.name) {
                 CheckoutScreen(
                     orderUiState = uiState,
-                    onNextButtonClicked = { /*TODO*/ },
+                    onNextButtonClicked = {
+                        cancelOrderAndNavigateToStart(
+                            viewModel,
+                            navController,
+                        )
+                    },
                     onCancelButtonClicked = {
                         cancelOrderAndNavigateToStart(
                             viewModel,
