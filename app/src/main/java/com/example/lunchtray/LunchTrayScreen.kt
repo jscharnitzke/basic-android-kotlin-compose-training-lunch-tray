@@ -33,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.lunchtray.datasource.DataSource
 import com.example.lunchtray.ui.EntreeMenuScreen
 import com.example.lunchtray.ui.OrderViewModel
+import com.example.lunchtray.ui.SideDishMenuScreen
 import com.example.lunchtray.ui.StartOrderScreen
 
 enum class Screen(@StringRes val title: Int) {
@@ -88,6 +89,20 @@ fun LunchTrayApp(
                     },
                     onNextButtonClicked = { navController.navigate(Screen.SideDishMenu.name) },
                     onSelectionChanged = { viewModel.updateEntree(it) }
+                )
+            }
+
+            composable(route = Screen.SideDishMenu.name) {
+                SideDishMenuScreen(
+                    options = DataSource.sideDishMenuItems,
+                    onCancelButtonClicked = {
+                        cancelOrderAndNavigateToStart(
+                            viewModel,
+                            navController,
+                        )
+                    },
+                    onNextButtonClicked = { navController.navigate(Screen.AccompanimentMenu.name) },
+                    onSelectionChanged = { viewModel.updateSideDish(it) }
                 )
             }
         }
