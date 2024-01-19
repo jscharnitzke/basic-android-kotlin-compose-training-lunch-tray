@@ -16,6 +16,7 @@
 package com.example.lunchtray
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -26,9 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.lunchtray.datasource.DataSource
+import com.example.lunchtray.ui.EntreeMenuScreen
 import com.example.lunchtray.ui.OrderViewModel
+import com.example.lunchtray.ui.StartOrderScreen
 
 enum class Screen(@StringRes val title: Int) {
     Start(R.string.app_name),
@@ -64,7 +69,35 @@ fun LunchTrayApp(
             startDestination = Screen.Start.name,
             modifier = Modifier.padding(innerPadding),
         ) {
+            composable(route = Screen.Start.name) {
+                StartOrderScreen(
+                    onStartOrderButtonClicked = {
+                        navController.navigate(Screen.EntreeMenu.name)
+                    },
+                    modifier = Modifier.fillMaxSize())
+            }
 
+            composable(route = Screen.EntreeMenu.name) {
+                EntreeMenuScreen(
+                    options = DataSource.entreeMenuItems,
+                    onCancelButtonClicked = {
+                        cancelOrderAndNavigateToStart(
+                            viewModel,
+                            navController,
+                        )
+                    },
+                    onNextButtonClicked = { navController.navigate(Screen.SideDishMenu.name) },
+                    onSelectionChanged = { viewModel.updateEntree(it) }
+                )
+            }
         }
     }
+}
+
+private fun cancelOrderAndNavigateToStart(
+    viewModel: OrderViewModel,
+    navController: NavHostController,
+) {
+    viewModel.resetOrder()
+    navController.popBackStack(Screen.Start.name, inclusive = false)
 }
